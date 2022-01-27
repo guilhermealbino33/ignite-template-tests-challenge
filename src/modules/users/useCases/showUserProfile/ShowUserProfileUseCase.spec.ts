@@ -1,27 +1,27 @@
-import { CreateUserUseCase } from "../createUser/CreateUserUseCase";
+import { InMemoryUsersRepository } from "../../repositories/in-memory/InMemoryUsersRepository";
 import { ICreateUserDTO } from "../createUser/ICreateUserDTO";
 import { ShowUserProfileUseCase } from "./ShowUserProfileUseCase";
 
-
-let createUserUseCase: CreateUserUseCase;
+let usersRepositoryInMemory: InMemoryUsersRepository;
 let showUserProfileUseCase: ShowUserProfileUseCase;
 
 describe("Show user profile", () => {
+  beforeEach(() => {
+    usersRepositoryInMemory = new InMemoryUsersRepository();
+    showUserProfileUseCase = new ShowUserProfileUseCase(usersRepositoryInMemory);
+  });
 
-
-  it("should be able to show user profile", async () => {
-    const userDTO: ICreateUserDTO = {
+  it("Should be able to show an user profile", async () => {
+    const user = await usersRepositoryInMemory.create({
       name: "username",
       email: "username@email.com",
       password: "1234",
-    };
-
-    const userCreated = await createUserUseCase.execute(userDTO);
+    });
 
     const result = await showUserProfileUseCase.execute(
-      userCreated.id as string
+      user.id as string
     );
 
-    expect(userCreated).toEqual(result);
+    expect(user).toEqual(result);
   });
 });
