@@ -40,19 +40,19 @@ describe("Get a balance", () => {
       user_id: user.id as string
     });
 
-    const balanceFetched = await getBalanceUseCase.execute({
+    const balance = await getBalanceUseCase.execute({
       user_id: user.id as string
     });
 
     if (statement2.type === OperationType.WITHDRAW) {
-      var balance = statement1.amount - statement2.amount;
+      var balanceCalc = statement1.amount - statement2.amount;
     } else {
-      var balance = statement1.amount + statement2.amount;
+      var balanceCalc = statement1.amount + statement2.amount;
     }
 
-    expect(balanceFetched).toHaveProperty("balance");
-    expect(balanceFetched.balance).toEqual(balance);
-    expect(balanceFetched.statement).toEqual(
+    expect(balance).toHaveProperty("balance");
+    expect(balance.balance).toEqual(balanceCalc);
+    expect(balance.statement).toEqual(
       expect.arrayContaining([statement1, statement2]
       ))
   });
