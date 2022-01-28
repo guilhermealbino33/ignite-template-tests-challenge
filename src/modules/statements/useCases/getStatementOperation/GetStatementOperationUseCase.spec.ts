@@ -14,6 +14,10 @@ describe("Get statement operation", () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository();
     inMemoryStatementsRepository = new InMemoryStatementsRepository();
+    getStatementOperationUseCase = new GetStatementOperationUseCase(
+      inMemoryUsersRepository,
+      inMemoryStatementsRepository
+    );
   });
 
   it("Should be able to get a deposit statement operation.", async () => {
