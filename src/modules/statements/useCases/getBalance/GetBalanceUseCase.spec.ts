@@ -60,7 +60,7 @@ describe("Get a balance", () => {
   it("Should not be able to get a balance from a non-existing user", async () => {
     await expect(async () => {
       await getBalanceUseCase.execute({
-        user_id: "9999"
+        user_id: "ANY"
       });
     }).rejects.toBeInstanceOf(GetBalanceError)
   });
