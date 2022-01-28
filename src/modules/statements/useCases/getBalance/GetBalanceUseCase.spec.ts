@@ -5,22 +5,22 @@ import { GetBalanceError } from "./GetBalanceError";
 import { OperationType } from "../../entities/Statement";
 
 let getBalanceUseCase: GetBalanceUseCase;
-let usersRepositoryInMemory: InMemoryUsersRepository;
+let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryStatementsRepository: InMemoryStatementsRepository;
 
 describe("Get a balance", () => {
   beforeEach(() => {
-    usersRepositoryInMemory = new InMemoryUsersRepository();
+    inMemoryUsersRepository = new InMemoryUsersRepository();
     inMemoryStatementsRepository = new InMemoryStatementsRepository();
 
     getBalanceUseCase = new GetBalanceUseCase(
       inMemoryStatementsRepository,
-      usersRepositoryInMemory
+      inMemoryUsersRepository
     );
   });
 
   it("Should be able to get a balance", async () => {
-    const user = await usersRepositoryInMemory.create({
+    const user = await inMemoryUsersRepository.create({
       email: "username@email.com",
       name: "username",
       password: "1234"
