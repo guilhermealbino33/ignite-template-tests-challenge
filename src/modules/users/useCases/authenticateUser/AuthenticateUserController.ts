@@ -17,3 +17,4 @@ export class AuthenticateUserController {
     return response.json({ user, token });
   }
 }
+
