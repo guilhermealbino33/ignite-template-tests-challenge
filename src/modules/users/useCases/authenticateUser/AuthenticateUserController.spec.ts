@@ -4,9 +4,11 @@ import { Connection } from "typeorm";
 
 import createConnection from "../../../../database";
 import { app } from "../../../../app";
+import { hash } from "bcryptjs";
+import { v4 as uuidV4 } from 'uuid';
 
 let connection: Connection;
-let normalUser: {
+let user: {
   name: string;
   email: string;
   password: string;
@@ -17,13 +19,13 @@ describe("Authenticate User", () => {
     connection = await createConnection();
     await connection.runMigrations();
 
-    normalUser = {
-      name: "NormalUser",
-      email: "normaluser@email.com",
-      password: "normalpassword"
-    }
+    const id = uuidV4();
+    const password = await hash("1234", 8);
 
-    await request(app).post("/api/v1/users").send(normalUser)
+    await connection.query(
+      `INSERT INTO USERS(id, name, email, password)
+      VALUES('${id}', 'user', 'user@email.com.br', '${password}')`,
+    );
   });
 
   afterAll(async () => {
@@ -31,39 +33,40 @@ describe("Authenticate User", () => {
     await connection.close();
   });
 
-  it("should be able to authenticate user", async () => {
+  it("Should be able to authenticate a user.", async () => {
     const response = await request(app).post("/api/v1/sessions").send({
-      email: normalUser.email,
-      password: normalUser.password,
+      email: "user@email.com.br",
+      password: "1234",
     });
 
-    const { token } = response.body;
+    const { user } = response.body;
 
     expect(response.status).toBe(200)
-    expect(response.body).toHaveProperty("token")
-    expect(response.body.user.email).toEqual(normalUser.email)
-    expect(token).not.toBeUndefined()
+    expect(response.body).toHaveProperty("user@email.com.br")
+    expect(user.email).toEqual(user.email)
+    expect(user).not.toBeUndefined()
   });
 
-  it("should not be able to authenticate a non-existing user", async () => {
+  it("Shouldn't be able to authenticate a non-existing user.", async () => {
     const responseToken = await request(app).post("/api/v1/sessions").send({
-      email: "usernonexistent@email.com",
-      password: "usernonexistentpassword",
+      email: "anotheruser@email.com",
+      password: "anotherUserPassword",
     });
 
     expect(responseToken.status).toBe(401)
-    expect(responseToken.body.message).toEqual('Incorrect email or password')
+    expect(responseToken.body.message).toEqual("Incorrect e-mail or password")
     expect(responseToken.body.token).toBe(undefined)
   });
 
-  it("should not be able to authenticate user with wrong password", async () => {
+  it("Shouldn't be able to authenticate user with incorrect password", async () => {
     const responseToken = await request(app).post("/api/v1/sessions").send({
-      email: normalUser.email,
-      password: "wrongpassword",
+      email: "user@email.com.br",
+      password: "654321",
     });
 
     expect(responseToken.status).toBe(401)
-    expect(responseToken.body.message).toEqual('Incorrect email or password')
+    expect(responseToken.body.message).toEqual("Incorrect e-mail or password")
     expect(responseToken.body.token).toBe(undefined)
   });
 });
+
