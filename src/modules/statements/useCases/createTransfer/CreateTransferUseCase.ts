@@ -4,17 +4,7 @@ import { AppError } from "../../../../shared/errors/AppError";
 import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
 import { OperationType, Statement } from "../../entities/Statement";
 import { IStatementsRepository } from "../../repositories/IStatementsRepository";
-import { CreateTransferError } from "./CreateTransferError";
 import { ITransferDTO } from "./ITransferDTO";
-
-interface IRequest {
-  user_id: string;
-}
-
-interface IResponse {
-  statement: Statement[];
-  balance: number;
-}
 
 @injectable()
 export class CreateTransferUseCase {
