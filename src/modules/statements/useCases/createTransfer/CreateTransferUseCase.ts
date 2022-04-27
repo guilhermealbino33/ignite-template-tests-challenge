@@ -1,9 +1,11 @@
 import { inject, injectable } from "tsyringe";
+import { AppError } from "../../../../shared/errors/AppError";
 
 import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
-import { Statement } from "../../entities/Statement";
+import { OperationType, Statement } from "../../entities/Statement";
 import { IStatementsRepository } from "../../repositories/IStatementsRepository";
 import { CreateTransferError } from "./CreateTransferError";
+import { ITransferDTO } from "./ITransferDTO";
 
 interface IRequest {
   user_id: string;
@@ -17,25 +19,37 @@ interface IResponse {
 @injectable()
 export class CreateTransferUseCase {
   constructor(
-    @inject('StatementsRepository')
-    private statementsRepository: IStatementsRepository,
-
-    @inject('UsersRepository')
+    @inject("UsersRepository")
     private usersRepository: IUsersRepository,
+    @inject("StatementsRepository")
+    private statementsRepository: IStatementsRepository
   ) {}
 
-  async execute({ user_id }: IRequest): Promise<IResponse> {
-    const user = await this.usersRepository.findById(user_id);
+  async execute({ payerId, beneficiaryID, amount, description }: ITransferDTO) {
+    const payer = await this.usersRepository.findById(payerId);
+    const beneficiary = await this.usersRepository.findById(beneficiaryID);
 
-    if(!user) {
-      throw new CreateTransferError();
+    if (!payer) {
+      throw new AppError("Payer ID not found!", 404);
+    }
+    if (!beneficiary) {
+      throw new AppError("Beneficiary ID not found!", 404);
     }
 
-    const balance = await this.statementsRepository.getUserBalance({
-      user_id,
-      with_statement: true
+    const payerBalance = await this.statementsRepository.getUserBalance({
+      user_id: payerId,
     });
 
-    return balance as IResponse;
+    if (amount > payerBalance.balance) {
+      throw new AppError("Insufficient funds!", 400);
+    }
+
+    await this.statementsRepository.create({
+      user_id: payerId,
+      payer_id: beneficiaryID,
+      amount,
+      description,
+      type: "transfer" as OperationType,
+    });
   }
 }
