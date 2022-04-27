@@ -6,14 +6,19 @@ import { CreateTransferUseCase } from "./CreateTransferUseCase";
 
 export class CreateTransferController {
   async execute(request: Request, response: Response) {
-    const { id: user_id } = request.user;
+    const { id: payerId } = request.user;
+    const { beneficiaryID } = request.params;
     const { amount, description } = request.body;
-    const getBalance = container.resolve(CreateTransferUseCase);
 
-    const transfer = await getBalance.execute({ user_id });
+    const createTransferUseCase = container.resolve(CreateTransferUseCase);
 
-    const balanceDTO = BalanceMap.toDTO(transfer);
+    await createTransferUseCase.execute({
+      payerId,
+      beneficiaryID,
+      amount,
+      description,
+    });
 
-    return response.json(balanceDTO);
+    return response.status(201).send("Transfer concluded!");
   }
 }
