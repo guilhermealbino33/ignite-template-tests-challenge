@@ -16,6 +16,11 @@ export class statements1651065102614 implements MigrationInterface {
             type: "uuid",
           },
           {
+            name: "payer_id",
+            type: "uuid",
+            isNullable: true,
+          },
+          {
             name: "description",
             type: "varchar",
           },
