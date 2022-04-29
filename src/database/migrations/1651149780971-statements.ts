@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
-export class statemensts1651149780971 implements MigrationInterface {
+export class statements1651149780971 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -33,7 +33,7 @@ export class statemensts1651149780971 implements MigrationInterface {
           {
             name: "type",
             type: "enum",
-            enum: ["deposit", "withdraw"],
+            enum: ["deposit", "withdraw", "transfer"],
           },
           {
             name: "created_at",
