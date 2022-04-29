@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { AppError } from "../../../../shared/errors/AppError";
 
 import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
-import { OperationType, Statement } from "../../entities/Statement";
+import { OperationType } from "../../entities/Statement";
 import { IStatementsRepository } from "../../repositories/IStatementsRepository";
 import { ITransferDTO } from "./ITransferDTO";
 
@@ -35,8 +35,8 @@ export class CreateTransferUseCase {
     }
 
     await this.statementsRepository.create({
-      user_id: payerId,
-      payer_id: beneficiaryID,
+      user_id: beneficiaryID,
+      payer_id: payerId,
       amount,
       description,
       type: "transfer" as OperationType,
