@@ -26,7 +26,7 @@ export class statements1651149780971 implements MigrationInterface {
           },
           {
             name: "amount",
-            type: "numeric",
+            type: "decimal",
             precision: 5,
             scale: 2,
           },
