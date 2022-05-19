@@ -10,6 +10,8 @@ export class CreateTransferController {
     const { amount, description } = request.body;
 
     const createTransferUseCase = container.resolve(CreateTransferUseCase);
+    console.log("payerId", payerId);
+    console.log("beneficiaryID", beneficiaryID);
 
     await createTransferUseCase.execute({
       payerId,
