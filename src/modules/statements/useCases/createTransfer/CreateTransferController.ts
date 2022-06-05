@@ -6,7 +6,7 @@ import { CreateTransferUseCase } from "./CreateTransferUseCase";
 export class CreateTransferController {
   async execute(request: Request, response: Response) {
     const { id: payerId } = request.user;
-    const { beneficiaryID } = request.params;
+    const { user_id: beneficiaryID } = request.params;
     const { amount, description } = request.body;
 
     const createTransferUseCase = container.resolve(CreateTransferUseCase);
@@ -20,6 +20,6 @@ export class CreateTransferController {
       description,
     });
 
-    return response.status(201).send("Transfer concluded!");
+    return response.status(201).json("Transfer concluded!");
   }
 }
